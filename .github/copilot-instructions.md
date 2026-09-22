@@ -1,0 +1,1 @@
+Before any task, read SYSTEM_DESIGN.md and dev-roadmap.md. Follow the non-goals list strictly.
