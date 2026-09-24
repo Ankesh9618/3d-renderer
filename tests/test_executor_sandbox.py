@@ -60,7 +60,6 @@ def test_infinite_loop_times_out_and_returns_failure() -> None:
 def test_disallowed_import_is_blocked() -> None:
     code = "import os\nprint('blocked')\n"
     result = run_code_in_sandbox(code, timeout_seconds=10)
-
     assert result.success is False
     assert result.exception is not None
     assert "ImportError" in result.exception or "blocked" in (result.stderr or "") or "disallowed" in (result.stderr or "")
@@ -129,9 +128,11 @@ def test_module_globals_bypass_is_blocked() -> None:
     code = (
         "import build123d\n"
         "fn = build123d.export_step\n"
-        "fn.__globals__.get('os', None) and fn.__globals__['os'].listdir('/')\n"
+        "fn.__globals__.get('os', None) and fn.__globals__['os'].listdir('C:\\\\')\n"
     )
-    result = run_code_in_sandbox(code, timeout_seconds=10)
+    # Importing build123d in an isolated child can cold-start OpenCascade on
+    # Windows; allow the payload to reach the actual module-global check.
+    result = run_code_in_sandbox(code, timeout_seconds=30)
 
     assert result.success is False
 
@@ -150,3 +151,31 @@ def test_subclasses_walk_bypass_is_blocked() -> None:
     )
     result = run_code_in_sandbox(code, timeout_seconds=10)
     assert result.success is False
+
+def test_reflection_builtins_are_not_available() -> None:
+    code = "dir()\n"
+    result = run_code_in_sandbox(code, timeout_seconds=10)
+    assert result.success is False
+
+def test_non_solid_geometry_is_rejected() -> None:
+    """A flat 2D face is valid geometry build123d will happily export.
+    The executor now re-imports the STEP output and rejects it because it
+    contains no solids, while leaving broader geometry validation to Milestone
+    5's evaluation harness."""
+    code = textwrap.dedent(
+        """
+        from build123d import Rectangle, export_step
+        flat_face = Rectangle(10, 10)
+        export_step(flat_face, "OUTPUT_PATH")
+        """
+    ).replace("OUTPUT_PATH", "flat_face.step")
+
+    # build123d import and STEP export can cold-start OpenCascade; a short
+    # timeout is too tight for this geometry-validation case on Windows.
+    result = run_code_in_sandbox(code, timeout_seconds=60)
+
+    assert result.success is False
+    assert result.step_path is None
+    assert result.exception == "GeometryValidationError"
+    assert result.traceback is not None
+    assert "contains no solids" in result.traceback

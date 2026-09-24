@@ -49,9 +49,9 @@ Every milestone below either builds toward running that experiment, or expands t
 ## Milestone 1.5 — Seed dataset
 **Goal:** 8–10 real or synthetic drawings to run every experiment against.
 
-- [ ] Cover these categories, one drawing each: flat plate, bracket, cylinder, flange, shaft, hole pattern, stepped part, sectioned part
-- [ ] Prefer synthetic generation where real drawings aren't available: hand-model a known part (Milestone 0 style), render its orthographic views back out with dimension annotations — this gives you ground-truth STEP for free, which real scanned drawings don't
-- [ ] Each drawing gets a ground-truth STEP file alongside it, even if hand-modeled and imperfect
+- [x] Cover these categories, one drawing each: flat plate, bracket, cylinder, flange, shaft, hole pattern, stepped part, sectioned part
+- [x] Prefer synthetic generation where real drawings aren't available: hand-model a known part (Milestone 0 style), render its orthographic views back out with dimension annotations — this gives you ground-truth STEP for free, which real scanned drawings don't
+- [x] Each drawing gets a ground-truth STEP file alongside it, even if hand-modeled and imperfect
 
 **Deliverable:** `data/seed_drawings/` — `{drawing_id}/drawing.png` + `{drawing_id}/ground_truth.step`
 **Exit criteria:** 8–10 labeled pairs, spanning the category list above

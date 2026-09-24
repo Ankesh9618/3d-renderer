@@ -256,12 +256,6 @@ SAFE_BUILTINS = {
     "ord": ord,
     "chr": chr,
     "format": format,
-    "getattr": getattr,
-    "setattr": setattr,
-    "hasattr": hasattr,
-    "delattr": delattr,
-    "dir": dir,
-    "vars": vars,
     "open": _guarded_open,
     "Exception": Exception,
     "TypeError": TypeError,
@@ -297,15 +291,41 @@ try:
     exec(compile(user_code, "<sandbox>", "exec"), namespace, namespace)
     step_files = sorted(sandbox_root.glob("*.step"))
     step_path = str(step_files[0]) if step_files else None
-    payload = {
-        "success": True,
-        "step_path": step_path,
-        "stdout": stdout_buffer.getvalue(),
-        "stderr": stderr_buffer.getvalue(),
-        "exception": None,
-        "traceback": None,
-        "timed_out": False,
-    }
+    if step_path is not None:
+        from build123d import import_step as _import_step
+
+        imported = _import_step(step_path)
+        if len(imported.solids()) == 0:
+            validation_message = "Exported geometry contains no solids - not a valid part."
+            payload = {
+                "success": False,
+                "step_path": None,
+                "stdout": stdout_buffer.getvalue(),
+                "stderr": stderr_buffer.getvalue() or validation_message,
+                "exception": "GeometryValidationError",
+                "traceback": validation_message,
+                "timed_out": False,
+            }
+        else:
+            payload = {
+                "success": True,
+                "step_path": step_path,
+                "stdout": stdout_buffer.getvalue(),
+                "stderr": stderr_buffer.getvalue(),
+                "exception": None,
+                "traceback": None,
+                "timed_out": False,
+            }
+    else:
+        payload = {
+            "success": True,
+            "step_path": step_path,
+            "stdout": stdout_buffer.getvalue(),
+            "stderr": stderr_buffer.getvalue(),
+            "exception": None,
+            "traceback": None,
+            "timed_out": False,
+        }
 except BaseException as exc:
     payload = {
         "success": False,

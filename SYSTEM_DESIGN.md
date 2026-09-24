@@ -102,7 +102,7 @@ class RenderSet:
     front: str    # path to image
     top: str
     side: str
-    section: str | None = None   # stubbed interface, unused in V1
+    section: str | None = None   # populated when a section plane is requested
 ```
 
 ### `ComparisonReport` (from `pipeline/refine_loop.py`)
@@ -139,7 +139,7 @@ class PipelineRunResult:
 ### 6.2 Render harness (`render/harness.py`)
 - `render(step_path: str, output_dir: str) -> RenderSet`
 - Produces standard first-angle orthographic projections: front, top, side. This matches the seed dataset convention and must be kept consistent across the render harness.
-- `render_section(step_path: str, plane: ..., output_dir: str) -> str` — interface should exist even though unused in V1, so adding real section support later doesn't require touching call sites.
+- `render_section(step_path: str, plane: ..., output_dir: str) -> str` — produces a deterministic section profile with hatching for a known solid and cutting plane. Interpreting section views from unknown drawings remains out of scope.
 - Pure function relative to its inputs — given the same STEP file, output should be deterministic.
 
 ### 6.3 VLM client (`pipeline/vlm_client.py`)
@@ -185,7 +185,7 @@ class PipelineRunResult:
 Carry these forward — do not silently resolve them by picking a default deep in implementation code without flagging it:
 - **Projection convention** — the seed dataset and render harness use first-angle projection. This is now the repo-standard convention and should be preserved for all generated orthographic views.
 - **Cross-view depth inference** — explicitly out of scope for V1, but if Milestone 2 shows this is the dominant failure mode, it's the hardest item in Milestone 6, not a quick fix.
-- **Section views** — `render_section` is a stubbed interface only; no logic for interpreting what a section view in the original drawing represents exists yet.
+- **Section views** — generation from a known solid and cutting plane is implemented for the seed dataset; interpreting what a section view in an unknown original drawing represents remains deferred.
 - **Dataset scarcity** — real dimensioned drawings paired with ground-truth CAD are scarce; the seed dataset leans on synthetic generation (known part → rendered fake blueprint) for this reason.
 - **VLM code output reliability** — no assumption should be made that generated code is syntactically valid; the safe executor's structured failure handling is not optional error handling, it's a load-bearing part of the refine loop.
 - **Sandbox guarantees and limits** — the sandbox now explicitly strips the parent environment down to a minimal allowlist, blocks dynamic import bypasses via a runtime `__import__` hook, removes `eval`/`exec`/`compile` from the available builtins, and blocks direct filesystem writes outside the output directory while allowing read-only access to the Python/runtime dependency files needed by build123d. This meaningfully closes the accidental/naive cases, including the specific `eval`/`__import__`/aliased-import bypasses covered in regression tests.

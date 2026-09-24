@@ -14,7 +14,7 @@ def build_flange() -> Solid:
         Solid.make_cylinder(
             radius=22.0,
             height=30.0,
-            plane=Plane(origin=(0.0, 0.0, 0.0), z_dir=(0.0, 0.0, -1.0)),
+            plane=Plane(origin=(0.0, 0.0, 0.0), z_dir=(0.0, 0.0, 1.0)),
         )
     )
 
@@ -30,7 +30,7 @@ def build_flange() -> Solid:
             Solid.make_cylinder(
                 radius=6.0,
                 height=30.0,
-                plane=Plane(origin=(x_coord, y_coord, 0.0), z_dir=(0.0, 0.0, -1.0)),
+                plane=Plane(origin=(x_coord, y_coord, 0.0), z_dir=(0.0, 0.0, 1.0)),
             )
         )
 

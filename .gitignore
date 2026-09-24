@@ -1,0 +1,29 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated CAD and pipeline outputs
+output/
+data/seed_drawings/
+render/outputs/
+foundation/exports/
+foundation/_probe.*
+*.bin
+
+# Local editor and operating-system files
+.vscode/
+.idea/
+.env
+.env.*
+.DS_Store
+Thumbs.db

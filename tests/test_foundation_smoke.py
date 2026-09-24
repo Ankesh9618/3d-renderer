@@ -33,10 +33,10 @@ class ExpectedDims:
 # Volume: easiest way to get a trustworthy number is to print part.volume
 # once after building, eyeball it against a hand calc, then lock it in here.
 EXPECTED = {
-    "flat_plate_with_holes": ExpectedDims(length=150, width=90, height=12, volume=162_000),
+    "flat_plate_with_holes": ExpectedDims(length=150, width=90, height=12, volume=156_571.32789459675),
     "l_bracket":            ExpectedDims(length=120, width=90, height=12, volume=45_600),
     "cylinder_part":        ExpectedDims(length=60, width=60, height=80, volume=226_194.67105846514),
-    "flange":               ExpectedDims(length=100, width=100, height=12, volume=94_247.7796076938),
+    "flange":               ExpectedDims(length=100, width=100, height=12, volume=70_572.73737024116),
     "stepped_shaft":        ExpectedDims(length=48, width=48, height=67, volume=81_882.47092316435),
 }
 

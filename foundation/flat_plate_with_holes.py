@@ -10,10 +10,10 @@ OUTPUT_DIR = Path(__file__).resolve().parent / "exports"
 def build_flat_plate_with_holes() -> Solid:
     plate = Solid.make_box(length=150.0, width=90.0, height=12.0)
     hole_positions = [
-        (-45.0, -25.0),
-        (45.0, -25.0),
-        (-45.0, 25.0),
-        (45.0, 25.0),
+        (30.0, 25.0),
+        (120.0, 25.0),
+        (30.0, 65.0),
+        (120.0, 65.0),
     ]
 
     for x_coord, y_coord in hole_positions:
@@ -21,7 +21,7 @@ def build_flat_plate_with_holes() -> Solid:
             Solid.make_cylinder(
                 radius=6.0,
                 height=30.0,
-                plane=Plane(origin=(x_coord, y_coord, 0.0), z_dir=(0.0, 0.0, -1.0)),
+                plane=Plane(origin=(x_coord, y_coord, 0.0), z_dir=(0.0, 0.0, 1.0)),
             )
         )
 
